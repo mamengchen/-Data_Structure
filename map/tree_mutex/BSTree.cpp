@@ -31,6 +31,15 @@ namespace mmc {
 			, _data(data)
 		{}
 
+		BSTNode(BSTNode* node)
+		{
+			this->_data = node->_data;
+			this->_pLeft = node->_pLeft;
+			this->_pRight = node->_pRight;
+		}
+
+
+
 		BSTNode<T>* _pLeft;
 		BSTNode<T>* _pRight;
 		T _data;
@@ -113,6 +122,10 @@ namespace mmc {
 			return true;
 		}
 
+
+
+
+
 		bool Erase(const T& data)
 		{
 			//如果树为空，删除失败
@@ -136,78 +149,62 @@ namespace mmc {
 					pCur = pCur->_pRight;
 				}
 			}
-
+			PNode delete_pCur = pCur;
 			//data不在二叉搜索树中，无法删除
 			if (nullptr == pCur)
 				return false;
 			if (nullptr == pCur->_pRight)
 			{
-				//右孩子为空
 				if (pParent->_pLeft == pCur)
 				{
 					pParent->_pLeft = pCur->_pLeft;
-					delete pCur;
-					return true;
 				}
 				else {
 					pParent->_pRight = pCur->_pLeft;
-					delete pCur;
-					return true;
 				}
+				cout << "删除的结点是右孩子为空" << endl;
 			}
 			else if (nullptr == pCur->_pLeft)
 			{
-				//左孩子为空
 				if (pParent->_pLeft == pCur)
 				{
 					pParent->_pLeft = pCur->_pRight;
-					delete pCur;
-					return true;
 				}
 				else {
 					pParent->_pRight = pCur->_pRight;
-					delete pCur;
-					return true;
 				}
+
+				cout << "删除的结点是左孩子为空" << endl;
 			}
 			else
 			{
-				//当左右子树都在时，我们需要找到左子树最大的，右子树最小的
-				//这里我找的是左子树最小的，
-				PNode Parent_find_node = pCur;
-				PNode Find_max_node = pCur->_pLeft;
-				bool signal = false;
-				while (Find_max_node->_pRight != nullptr)
+				//这里我们需要找到右子树最小的那个结点
+				PNode ppd = pCur;
+				PNode psd = pCur->_pRight;
+				while (psd->_pLeft)
 				{
-					Parent_find_node = Find_max_node;
-					Find_max_node = Find_max_node->_pRight;
-					signal = true;
+					ppd = psd;
+					psd = psd->_pLeft;
 				}
-
-				if (signal)
-				{
-					//这里不用判断这个结点一定没有右孩子，其有左孩子和没有左孩子一个样子
-					Parent_find_node->_pRight = Find_max_node->_pLeft;
-				}
-
+				ppd->_pLeft = psd->_pRight;
 				if (pParent->_pLeft == pCur)
 				{
-					pParent->_pLeft = Find_max_node;
-					Find_max_node->_pLeft = pCur->_pLeft;
-					Find_max_node->_pRight = pCur->_pRight;
-					delete pCur;
-					return true;
+					pParent->_pLeft = psd;
+					psd->_pLeft = pCur->_pLeft;
+					psd->_pRight = pCur->_pRight;
 				}
-				else if (pParent->_pRight == pCur)
-				{
-					pParent->_pRight = Find_max_node;
-					Find_max_node->_pLeft = pCur->_pLeft;
-					Find_max_node->_pRight = pCur->_pRight;
-					delete pCur;
-					return true;
+				else {
+					pParent->_pRight = psd;
+					psd->_pLeft = pCur->_pLeft;
+					psd->_pRight = pCur->_pRight;
 				}
 			}
+			delete pCur;
+			return true;
+
 		}
+
+
 
 		void InOrder()
 		{
@@ -215,13 +212,13 @@ namespace mmc {
 		}
 
 	private:
-		void _InOrder(PNode pRoot)
+		void _InOrder(PNode pNode)
 		{
-			if (pRoot)
+			if (pNode)
 			{
-				_InOrder(pRoot->_pLeft);
-				cout << pRoot->_data << " ";
-				_InOrder(pRoot->_pRight);
+				_InOrder(pNode->_pLeft);
+				cout << pNode->_data << " ";
+				_InOrder(pNode->_pRight);
 			}
 		}
 		void _Destroy(PNode& pRoot)
