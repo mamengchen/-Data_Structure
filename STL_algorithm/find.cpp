@@ -1,5 +1,5 @@
 //#7：find
-//作用：返回第一个值等价于给定值的元素
+//#作用：返回第一个值等价于给定值的元素
 #include <iostream>
 #include <algorithm>
 #include <vector>
