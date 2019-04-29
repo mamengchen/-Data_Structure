@@ -241,6 +241,7 @@ void testBase(Base& p)
 int main()
 {
 	Base b(1000);
+	cout << sizeof(b) << endl;
 	testBase(b);
 	system("pause");
 	return 0;
@@ -258,6 +259,10 @@ int main()
 
 //继承下的C++对象模型
 //单继承
+
+#if 0
+typedef void(*Fun)(void);
+
 class Base
 {
 public:
@@ -293,6 +298,7 @@ public:
 	}
 private:
 	int baseI;
+	int ba;
 	static int baseS;
 };
 
@@ -320,7 +326,7 @@ public:
 		cout << "Derive::~Derive()" << endl;
 	}
 
-private:
+public:
 	int DeriveI;
 };
 
@@ -328,9 +334,188 @@ int main()
 {
 	Derive d(1024);
 	cout << sizeof(d) << endl;
+	cout << "[0]Base::vptr";
+	cout << "\t地址：" << (int *)(&d) << endl;
+	//基类中的虚函数：
+	cout << ((int *)*((int *)(&d))) << endl;
+	Fun fun1 = (Fun)*((int *)*((int *)(&d)));
+	fun1();
+	cout << ((int *)*(int *)(&d) + 1) << endl;
+	Fun fun2 = (Fun)*((int *)*((int *)(&d)) + 1);
+	fun2();
+	//派生类的析构函数
 	/*
-	运行结果：12 << 因为实例化的对象中有个两个虚标指针vptr1，vptr2
-	一个指向形成的基类表，一个指向派生类的虚表*/
+	Fun fun3 = (Fun)*((int *)*((int *)(&d)) + 2);
+	fun3();
+	*/
+	Fun fun4 = (Fun)*((int *)*((int *)(&d)) + 3);
+	fun4();
+	cout << "[0]Derive::vptr";
+	cout << "\t地址: " << (int *)(&d) + 1 << endl;
+	//派生类中的虚函数：
+	cout << ((int *)*((int*)(&d) + 1)) << endl;
+	cout << *((int *)(&d) + 2) << endl;
+	Fun fun3 = (Fun)*((int *)*((int *)(&d) + 1));
+	fun3();
+	cout << "[1]" << "Derive::~Derive" << endl;
+
+
+	/*
+		运行结果：12 << 因为实例化的对象中有个两个虚标指针vptr1，vptr2
+		一个指向形成的基类表，一个指向派生类的虚表，但是应该指向第二个虚表的指针
+		里面指向一段我们啥也没有的空间，反而在第一个虚表中的最后位置放着派生类的虚函数？？？
+	*/
 	system("pause");
 	return 0;
 }
+#endif
+
+/* 多重继承 */
+//单继承中（一般继承）,子类会扩展父类的虚函数表。在多继承中，子类含有多个
+//父类的子对象。
+//1.子类的虚函数被放在声明的第一个基类的虚函数表中。
+//2.重学时，所有基类的print()函数都被子类的print()函数覆盖.
+//3.内存布局中，父类按照其声明顺序排列。
+
+#if 1
+class Base
+{
+public:
+	Base(int i) : baseI(i) {}
+
+	int getI() {
+		cout << "Base::getI()" << endl;
+		return baseI;
+	}
+
+	static void countI()
+	{
+		cout << "Base::countI()--static" << endl;
+	}
+
+	virtual void print() {
+		cout << "Base::print()" << endl;
+	}
+
+	virtual ~Base()
+	{
+		cout << "Base::~Base()" << endl;
+	}
+private:
+	int baseI;
+	static int baseS;
+};
+
+class Base_2
+{
+public:
+	Base_2(int i) : base2I(i) {}
+
+	int getI()
+	{
+		cout << "Base_2::getI()" << endl;
+		return base2I;
+	}
+
+	virtual void print()
+	{
+		cout << "Base_2::print()" << endl;
+	}
+
+	virtual void demo2()
+	{
+		cout << "Base_2::demo()" << endl;
+	}
+
+	virtual ~Base_2()
+	{
+		cout << "Base_2::~Base_2()" << endl;
+	}
+private:
+	int base2I;
+	int base2S = 1000;
+};
+
+class Driver : public Base, public  Base_2
+{
+public:
+	Driver(int d) : Base(1000),
+		Base_2(2000),
+		my_Driver(d)
+	{}
+
+	virtual void print()
+	{
+		cout << "Driver::print()" << endl;
+	}
+
+	virtual void demo()
+	{
+		cout << "Driver::demo()" << endl;
+	}
+private:
+	int my_Driver;
+};
+
+typedef void(*Fun)();
+
+int main()
+{
+	Base a(1);
+	Base_2 b(2);
+	Driver d(1024);
+	cout << "第一个基类的大小：" << sizeof(a) << endl;
+	cout << "第一个基类的大小：" << sizeof(b) << endl;
+	cout << "派生对象的大小：" << sizeof(d) << endl;
+	/* 从第一个和第二个我们知道静态的不在占用一个类的大小
+	则第一个为一个虚表指针vptr，一个数据成员，*/
+	//第一个虚表中有的函数
+	cout << "[0]Base::vptr";
+	cout << "\t地址: " << (int *)(&d) << endl;
+	cout << "[0][1]:" << (int *)*((int *)(&d)) << endl;
+	Fun fun1 = (Fun)*((int *)*((int *)(&d)));
+	fun1();
+	cout << "[0][2]:" << (int *)*(int *)(&d) + 1 << endl;
+	Fun fun2 = (Fun)*((int *)*(int *)(&d) + 1);
+	//fun2(); //析构函数无法通过地址调用
+
+	cout << "[0][3]:" << (int *)*(int *)(&d) + 2 << endl;
+	Fun fun3 = (Fun)*((int *)*(int *)(&d) + 2);
+	fun3(); //调用产生越界访问
+	cout << "[0][4]:" << (int *)*(int *)(&d) + 3 << endl;
+	Fun fun7 = (Fun)*((int *)*(int *)(&d) + 3);
+	fun7(); //调用产生越界访问
+
+	/*
+	(int *)(&d) + 1:这个地址存放着第一个基类的私有成员
+	*/
+
+	//第二个虚表位置
+	cout << "[1]Base_2::vptr";
+	cout << "\t地址: " << (int *)(&d) + 2 << endl;
+	cout << "[1][1]:" << (int *)*((int *)(&d) + 2) << endl;
+	Fun fun4 = (Fun)*(int *)*((int *)(&d) + 2);
+	fun4();
+	cout << "[1][2]:" << (int *)*((int *)(&d) + 2) + 1 << endl;
+	Fun fun5 = (Fun)*((int *)*((int *)(&d) + 2) + 1);
+	fun5();
+	cout << "[1][3]:" << (int *)*((int *)(&d) + 2) + 2 << endl;
+	Fun fun6 = (Fun)*((int *)*((int *)(&d) + 2) + 2);
+	//析构函数无法通过地址调用
+	//fun6();
+	/*cout << "[1][4]:" << (int *)*((int *)(&d) + 2) + 3 << endl;
+	Fun fun7 = (Fun)*((int *)*((int *)(&d) + 2) + 3);
+	fun7();*/
+
+	/* (int *)(&d) + 2  ： 这是第二个基类函数的第一个成员变量*/
+	/* (int *)(&d) + 3  ： 这是第二个基类函数的第二个成员变量*/
+
+	//第三个虚表位置
+	cout << "[2]Driver::vptr";
+	cout << "\t地址: " << (int *)(&d) + 4 << endl;
+	cout << "[2][1]:" << (int *)*((int *)(&d) + 4) << endl;
+	Fun fun8 = (Fun)*((int *)*((int *)(&d) + 4));
+	fun8();
+	return 0;
+}
+#endif
