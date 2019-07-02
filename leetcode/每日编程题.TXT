@@ -1,0 +1,108 @@
+#include <iostream>
+#include <string>
+#include <stack>
+#include <algorithm>
+using namespace std;
+int main()
+{
+	string mystr;
+	stack<string> mystack;
+	while (cin >> mystr)
+	{
+		mystack.push(mystr);
+		if (*(mystr.rbegin()) == '.')
+		{
+			break;
+		}
+	}
+	cout << mystack.top();
+	mystack.pop();
+	while (!mystack.empty())
+	{
+		cout << ' ' << mystack.top();
+		mystack.pop();
+	}
+	return 0;
+}
+
+#include<stdio.h>
+int main() {
+	int a[100001], i, n, flag = 0, res = 1;
+	for (scanf("%d", &n), i = 0; i < n; i++) scanf("%d", a + i);
+	for (i = 1; i < n - 1; i++) {
+		if (a[i] > a[i - 1] && a[i] > a[i + 1]
+			|| a[i] < a[i - 1] && a[i] < a[i + 1]) {
+			res++;
+			if (n - 3 != i) i++;
+		}
+	}
+	printf("%d\n", res);
+}//ÕÒ³ö²¨·å²¨¹È
+
+//using namespace std;
+//
+//int main()
+//{
+//	string my_str;
+//	string print_str;
+//	vector<string> my_vecStr;
+//	getline(cin, my_str);
+//	for (int i = 0; i < my_str.size(); i++)
+//	{
+//		string min_str;
+//		while (my_str[i] <= '9' && my_str[i] >= '0' && i < my_str.size())
+//		{
+//			min_str.push_back(my_str[i]);
+//			i++;
+//		}
+//		my_vecStr.push_back(min_str);
+//	}
+//
+//	for (int i = 0; i < my_vecStr.size(); i++)
+//	{
+//		if (my_vecStr[i].size() > print_str.size())
+//		{
+//			print_str.clear();
+//			print_str = my_vecStr[i];
+//		}
+//	}
+//	cout << print_str;
+//	return 0;
+//}
+
+
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+using namespace std;
+class Solution {
+public:
+	int MoreThanHalfNum_Solution(vector<int> numbers) {
+		map<int, int> mymap;
+		int midpush = numbers.size() / 2 + 1;
+		for (int i = 0; i < numbers.size(); i++)
+		{
+			mymap[numbers[i]]++;
+		}
+
+		for (auto iter : mymap)
+		{
+			if (iter.second >= midpush)
+			{
+				return iter.first;
+			}
+		}
+		return 0;
+	}
+};
+
+int main()
+{
+	vector<int> my_vec{ 1,2,3,2,4,2,2 };
+	Solution ss;
+	int i = ss.MoreThanHalfNum_Solution(my_vec);
+	cout << i;
+	return 0;
+}
