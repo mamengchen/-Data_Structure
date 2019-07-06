@@ -143,3 +143,89 @@ int main()
 	cout << my_str.c_str();
 	return 0;
 }
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+int main()
+{
+    int number, data, max, all;
+    vector<int> my_vec;
+    cin >> number;
+    while (cin >> data)
+    {
+        my_vec.push_back(data);
+    }
+    max = my_vec[0];
+    all = my_vec[0];
+    for (int i = 1; i < my_vec.size(); i++)
+    {
+        if (all < 0)
+        {
+            if (all > my_vec[i])
+            {
+                continue;
+            }
+            all = my_vec[i];
+            continue;
+        }
+        if (my_vec[i] < 0)
+        {
+            if (all > max)
+            {
+                max = all;
+            }
+        }
+        all += my_vec[i];
+    }
+    if (all > max)
+    {
+        max = all;
+    }
+    cout << max;
+    return 0;
+}
+
+#include <iostream>
+#include <string>
+using namespace std;
+bool judge(string strA)
+{
+    int i = 0;
+    int len = strA.size()-1;
+    while (i <= len)
+    {
+        if (strA[i] != strA[len])
+        {
+            return false;
+        }
+        i++;
+        len--;
+    }
+    return true;
+}
+int main()
+{
+	string strA;
+	string strB;
+	string temp;
+    int count, len;
+    while (cin >> strA >> strB)
+    {
+        count = 0;
+        len = strA.size() + 1;
+        temp = strA;
+        for (int i = 0; i < len; i++)
+        {
+            strA = temp;
+            strA.insert(i, strB);
+            if (judge(strA))
+            {
+                count++;
+            }
+        }
+    }
+    cout << count;
+    return 0;
+}
