@@ -229,3 +229,122 @@ int main()
     cout << count;
     return 0;
 }
+
+
+//#include<string>
+//#include<iostream>
+//using namespace std;
+//int strtoint(string str) {
+//	if (str.size() == 0) {
+//		return 0;
+//	}
+//	long long num = 0;
+//	int s = 1;
+//	if (str[0] == '-') {
+//		s = -1;
+//	}
+//	for (int i = (str[0] == '-' || str[0] == '+') ? 1 : 0; i < str.size(); i++) {
+//		if ((str[i] >= '0'&&str[i] <= '9')) {
+//			num = num * 10 + str[i] - '0';
+//		}
+//		else if (str[i] == ' ') {
+//			continue;
+//		}
+//		else {
+//			return 0;
+//		}
+//	}
+//	return num * s;
+//}
+//int main() {
+//	string str = "  0234";
+//	int num = strtoint(str);
+//	cout << num << endl;
+//	system("pause");
+//	return 0;
+//}
+//**************************************************************
+//**************************************************************
+//#include<string>
+//#include<iostream>
+//using namespace std;
+//int strtoint(string str) {
+//	if (str.size() == 0) {
+//		return 0;
+//	}
+//	int result = 0;
+//	if (str[0] == '-' || str[0] == '+') {
+//		for (int i = 1; i < str.length(); i++) {
+//			if (str[i] < '0' || str[i] > '9') {
+//				return 0;
+//			}
+//			result = result * 10 + (str[i] - '0');
+//		}
+//		if (str[0] == '-') {
+//			result = 0 - result;
+//		}
+//	}
+//	else {
+//		for (int i = 0; i < str.length(); i++) {
+//
+//			if (str[i] == ' ') {
+//				continue;
+//			}
+//			else if (str[i] >= '0'&&str[i] <= '9') {
+//				result = result * 10 + (str[i] - '0');
+//			}
+//			else
+//				return 0;
+//		}
+//	}
+//	return result;
+//}
+//
+//int main() {
+//	string str = "-0234";
+//	int num = strtoint(str);
+//	cout << num << endl;
+//	system("pause");
+//	return 0;
+//}
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+int main()
+{
+	int name_col, name_ron;
+	int num = 0;
+	cin >> name_col >> name_ron;
+	vector<vector<bool>> my_vec(name_ron, vector<bool>(name_col, true));
+	for (int i = 0; i < my_vec.size(); i++)
+	{
+		for (int j = 0; j < my_vec[i].size(); j++)
+		{
+			if (my_vec[i][j])
+			{
+				if (i + 2 < my_vec.size())
+				{
+					my_vec[i + 2][j] = false;
+				}
+				if (j + 2 < my_vec[i].size())
+				{
+					my_vec[i][j + 2] = false;
+				}
+			}
+		}
+	}
+	
+	for (int i = 0; i < my_vec.size(); i++)
+	{
+		for (int j = 0; j < my_vec[i].size(); j++)
+		{
+			if (my_vec[i][j])
+				num++;
+		}
+	}
+	cout << num;
+	return 0;
+}
