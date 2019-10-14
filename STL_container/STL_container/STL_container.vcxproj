@@ -127,6 +127,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="alloc.h" />
+    <ClInclude Include="heap_algo.h" />
+    <ClInclude Include="iterator.h" />
     <ClInclude Include="type_traits.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>

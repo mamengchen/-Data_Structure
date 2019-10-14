@@ -120,6 +120,131 @@ namespace mystl {
 		// (implicit constructiable for other pair其他对的隐式可构造)
 		template <class Other1,class Other2,
 			typename std::enable_if<
-			std::is_constructible<
+			std::is_constructible<Ty1, const Other1&>::value && 
+			std::is_constructible<Ty2,const Other2&>::value &&
+			std::is_convertible<const Other1&, Ty1>::value &&
+			std::is_convertible<const Other2&, Ty2>::value , int>::type = 0>
+			constexpr pair(const pair<Other1, Other2>& other )
+			: first(other.first),
+			second(other.second)
+		{}
+
+		// implicit constructiable for other pair(其他对的隐式可构造)
+		template <class Other1, class Other2,
+			typename std::enable_if< 
+			std::is_constructible<Ty1,const Other1&>::value &&
+			std::is_constructible<Ty2,const Other2&>::value &&
+			(!std::is_convertible<const Other1&, Ty1>::value ||
+				!std::is_convertible<const Other2&,Ty2>::value), int>::iter = 0>
+			explicit constexpr pair(const pair<Other1, Other2>& other)
+			: first(other.first)
+			,second(other.second)
+		{}
+
+		// implicit constructiable for other pair
+		template <class Other1, class Other2,
+			typename std::enable_if<
+			std::is_constructible<Ty1, Other1>::value&&
+			std::is_constructible<Ty2, Other2>::value&&
+			std::is_convertible<Other1, Ty1>::value&&
+			std::is_convertible<Other2, Ty2>::value, int>::type = 0>
+			constexpr pair(pair<Other1, Other2> && other)
+			: first(mystl::forward<Other1>(other.first)),
+			second(mystl::forward<Other2>(other.second))
+		{
+		}
+
+		// explicit constructiable for other pair
+		template <class Other1, class Other2,
+			typename std::enable_if<
+			std::is_constructible<Ty1, Other1>::value&&
+			std::is_constructible<Ty2, Other2>::value &&
+			(!std::is_convertible<Other1, Ty1>::value ||
+				!std::is_convertible<Other2, Ty2>::value), int>::type = 0>
+			explicit constexpr pair(pair<Other1, Other2> && other)
+			: first(mystl::forward<Other1>(other.first)),
+			second(mystl::forward<Other2>(other.second))
+		{
+		}
+
+
+		pair& operator=(const pair& rhs) {
+			if (this != &rhs) {
+				first = rhs.first;
+				second = rhs.second;
+			}
+			return *this;
+		}
+
+		pair& operator=(pair&& rhs)
+		{
+			if (this != &rhs)
+			{
+				first = mystl::move(rhs.first);
+				second = mystl::move(rhs.second);
+			}
+			return *this;
+		}
+
+		template <class Other1, class Other2>
+		pair& operator=(const pair<Other1, Other2>& other) {
+			first = other.first;
+			second = other.second;
+			return *this;
+		}
+
+		template <class Other1, class Other2>
+		pair& operator=(pair<Other1, Other2>&& other) {
+			first = mystl::forward<Other1>(other.first);
+			second = mystl::forward<Other2>(other.second);
+			return *this;
+		}
+
+		// 我们可用default和delete修饰成员函数，使之成为缺省函数或者删除函数
+		~pair() = default;
+
+		void swap(pair& other) {
+			if (this != &other) {
+				mystl::swap(first, other.first);
+				mystl::swap(second, other.second);
+			}
+		}
 	};
+
+	// 重载比较操作符
+	template <class Ty1, class Ty2>
+	bool operator==(const pair<Ty1, Ty2>& lhs, const pair<Ty1, Ty2>& rhs) {
+		return lhs.first == rhs.first && lhs.second = rhs.second;
+	}
+
+	template <class Ty1, class Ty2>
+	bool operator<(const pair<Ty1, Ty2>& lhs, const pair<Ty1, Ty2>& rhs) {
+		return lhs.first < rhs.first || (lhs.first == rhs.first && lhs.second < rhs.second);
+	}
+
+	template <class Ty1, class Ty2>
+	bool operator!=(const pair<Ty1, Ty2>& lhs, const pair<Ty1, Ty2>& rhs) {
+		return !(lhs == rhs);
+	}
+
+	template <class Ty1, class Ty2>
+	bool operator>(const pair<Ty1, Ty2>& lhs, const pair<Ty1, Ty2>& rhs) {
+		return rhs < lhs;
+	}
+
+	template <class Ty1, class Ty2>
+	bool operator<=(const pair<Ty1, Ty2>& lhs, const pair<Ty1, Ty2>& rhs) {
+		return !(rhs < lhs);
+	}
+
+	template < class Ty1, class Ty2>
+	void swap(pair<Ty1, Ty2>& lhs, pair<Ty1, Ty2>& rhs) {
+		lhs.swap(rhs);
+	}
+
+	template <class Ty1, class Ty2>
+	pair<Ty1, Ty2> make_pair(Ty1&& first, Ty2&& second)
+	{
+		return pair<Ty1, Ty2>(mystl::forward<Ty1>(first), mystl::forward<Ty2>(second));
+	}
 }
