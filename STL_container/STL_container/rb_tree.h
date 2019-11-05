@@ -144,6 +144,7 @@ struct rb_tree_node_base
   }
 };
 
+
 template <class T>
 struct rb_tree_node :public rb_tree_node_base<T>
 {
