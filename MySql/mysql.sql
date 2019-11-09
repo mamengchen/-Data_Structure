@@ -3,6 +3,7 @@ id smallint unsigned auto_increment primary key,
 username varchar(20) not null unique key,
 age tinyint unsigned);
 
+
 create table tb6(
 id smallint unsigned auto_increment primary key,
 username varchar(20) not null unique key,
