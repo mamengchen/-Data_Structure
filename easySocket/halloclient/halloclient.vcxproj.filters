@@ -18,5 +18,11 @@
     <ClCompile Include="client.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="client2.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="client3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
