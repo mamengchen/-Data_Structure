@@ -3,5 +3,6 @@ C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCT
   client.cpp
   client2.cpp
   client3.cpp
+  selectClient.cpp
   正在生成代码...
   halloclient.vcxproj -> D:\xshell\halloSocket\../bin/Win32/Debug\halloclient.exe

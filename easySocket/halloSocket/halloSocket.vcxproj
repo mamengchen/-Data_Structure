@@ -138,6 +138,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="selectS.cpp" />
+    <ClCompile Include="selectServer.cpp" />
     <ClCompile Include="server.cpp" />
     <ClCompile Include="server2.cpp" />
     <ClCompile Include="server3.cpp" />
