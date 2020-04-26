@@ -36,3 +36,44 @@ DROP INDEX idx_type ON t_message;
 CREATE INDEX idx_type ON t_message(type);
 SHOW INDEX FROM t_message;
 ALTER TABLE t_message ADD INDEX idx_type(type);
+
+
+
+use demo
+select * from t_emp;
+select empno,ename,sal from t_emp;
+
+select
+empno,
+sal*12 AS "nysal"
+from t_emp;
+
+select empno,ename,sal from t_emp LIMIT 0,5;
+select empno,ename,sal from t_emp LIMIT 5,5;
+select empno,ename,sal from t_emp LIMIT 10,5;
+
+
+select 
+from t_emp
+where (sal > 1000 AND sal < 3000) 
+select empno,ename,sal from t_emp LIMIT 10;
+
+select empno,ename,sal from t_emp order by sal;
+select empno,ename,sal from t_emp order by sal DESC;
+select empno,sal,hiredate from t_emp order by sal,hiredate DESC;
+select empno,ename,sal from t_emp order by sal DESC LIMIT 5;
+
+select job from t_emp;
+select distinct job from t_emp;
+
+select empno,ename,sal
+from t_emp
+where (deptno = 10 OR deptno = 30) AND sal >= 1000;
+
+select empno,ename,sal,hiredate
+from t_emp
+where deptno = 10 AND (IFNULL(comm,0)+sal)*12 >= 15000 AND DATEDIFF(NOW(),hiredate)/365 >= 20;
+
+select *
+from t_emp
+where deptno IN (10,20,30) AND job != "SALESMAN" AND hiredate < "1981-5-20";
