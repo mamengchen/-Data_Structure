@@ -77,3 +77,17 @@ where deptno = 10 AND (IFNULL(comm,0)+sal)*12 >= 15000 AND DATEDIFF(NOW(),hireda
 select *
 from t_emp
 where deptno IN (10,20,30) AND job != "SALESMAN" AND hiredate < "1981-5-20";
+
+
+select *
+from t_emp where comm is NULL
+and sal BETWEEN 2000 and 3000
+AND ename LIKE "_LAKE";
+
+select * 
+from t_emp where comm is null
+and ename REGEXP "^[\\u4e00-\\u9fa5]{2,4}$";
+
+select *
+from t_emp 
+where not deptno in(10,20) XOR sal >= 2000; 
