@@ -91,3 +91,121 @@ and ename REGEXP "^[\\u4e00-\\u9fa5]{2,4}$";
 select *
 from t_emp 
 where not deptno in(10,20) XOR sal >= 2000; 
+
+SELECT AVG(sal+IFNULL(comm,0)) FROM t_emp;
+
+select SUM(sal)
+FROM t_emp WHERE deptno IN(10,20);
+
+SELECT  MAX(sal+IFNULL(comm,0))
+FROM t_emp where deptno IN(10,30);
+
+select MAX(LENGTH(ename))
+FROM t_emp WHERE deptno IN(10,30);
+
+select MIN(sal+IFNULL(comm,0))
+FROM t_emp WHERE deptno IN(10,30);
+
+select COUNT(*) FROM t_emp;
+SELECT COUNT(comm) FROM t_emp;
+select * from t_emp;
+
+select COUNT(*) 
+FROM t_emp WHERE deptno IN (10, 20) AND sal >= 2000 AND DATEDIFF(NOW(),hiredate)/365 >= 15;
+
+SELECT deptno,COUNT(*),AVG(sal),MAX(sal),MIN(sal)
+FROM t_emp
+GROUP BY deptno WITH ROLLUP;
+
+SELECT deptno,GROUP_CONCAT(ename),COUNT(*)
+FROM t_emp
+GROUP BY deptno;
+
+SELECT deptno,COUNT(*)
+FROM t_emp
+GROUP BY deptno HAVING AVG(sal)>=2000;
+
+SELECT deptno
+FROM t_emp
+WHERE hiredate>="1982-01-01"
+GROUP BY deptno HAVING COUNT(*)>=2;
+
+# 查询每名员工的部门信息
+SELECT e.ename,e.empno,d.dname
+FROM t_emp e JOIN t_dept d ON e.deptno=d.deptno;
+
+SELECT *
+FROM t_emp e JOIN t_dept d WHERE e.deptno=d.deptno;
+
+SELECT *
+FROM t_emp e,t_dept d WHERE e.deptno=d.deptno;
+
+# 查询每个员工的工号、姓名、部门名称、底薪、职位、工资等级？
+SELECT e.empno,e.ename,d.dname,e.sal,e.job,s.grade
+FROM t_emp e JOIN t_dept d ON e.deptno=d.deptno
+JOIN t_salgrade s ON e.sal BETWEEN s.losal AND s.hisal;
+
+# 查询与SCOTT相同部门的员工都有谁
+SELECT ename
+FROM t_emp WHERE deptno=(SELECT deptno FROM t_emp WHERE ename="SCOTT") AND ename!="SCOTT";
+
+SELECT e2.ename
+FROM t_emp e1 JOIN t_emp e2 ON e1.deptno=e2.deptno
+WHERE e1.ename="SCOTT" AND e2.ename!="SCOTT";
+
+# 查询底薪超过公司平均底薪的员工信息
+
+SELECT *
+FROM t_emp e JOIN (SELECT AVG(sal) AS avg FROM t_emp) t ON e.sal >= t.avg; 
+
+# 查询RESEARCH部门的人数、最高底薪、最低底薪、平均底薪、平均工龄？
+SELECT COUNT(*),MAX(t.sal),MIN(t.sal),AVG(t.sal),FLOOR(AVG(DATEDIFF(NOW(),t.hiredate)/365))
+FROM t_emp t JOIN t_dept d ON t.deptno = d.deptno
+WHERE d.dname = "RESEARCH";
+
+#查询每种职业的最高工资、最低工资、平均工资、最高工资等级和最低工资等级
+
+SELECT t.job,
+MAX(t.sal+IFNULL(t.comm,0)),
+MIN(t.sal+IFNULL(t.comm,0)),
+AVG(t.sal+IFNULL(t.comm,0)),
+MAX(s.grade),
+MIN(s.grade)
+FROM t_emp t JOIN t_salgrade s ON (t.sal+IFNULL(t.comm,0)) BETWEEN s.losal AND s.hisal
+GROUP BY t.job;
+
+# 查询每个底薪超过部门平均底薪的员工信息
+SELECT *
+FROM t_emp t JOIN (SELECT deptno,AVG(sal) as avg FROM t_emp GROUP BY deptno) e
+ON t.deptno=e.deptno AND t.sal > e.avg;
+
+# 查询每个部门的名称和部门的人数
+SELECT d.dname,COUNT(e.deptno)
+FROM t_dept d LEFT JOIN t_emp e ON e.deptno=d.deptno
+GROUP BY d.dname;
+
+
+#查询每个部门的名称和部门的人数？如果没有部门的员工，部门名称用NULL代替
+(
+SELECT d.dname,COUNT(e.deptno)
+FROM t_dept d LEFT JOIN t_emp e ON e.deptno=d.deptno
+GROUP BY d.deptno
+) UNION
+(
+SELECT d.dname,COUNT(*)
+FROM t_dept d RIGHT JOIN t_emp e ON e.deptno=d.deptno
+GROUP BY d.deptno
+);
+
+#查询每名员工的编号，姓名，部门，月薪，工资等级，工龄，上司编号，上司姓名，上司部门？
+
+SELECT e.empno,e.ename,d.dname,
+e.sal+IFNULL(e.comm,0),s.grade,
+FLOOR(DATEDIFF(NOW(),e.hiredate)/365),
+t.empno AS mempno,t.ename AS mename,t.dname AS mdname
+FROM t_emp e LEFT JOIN t_dept d ON e.deptno=d.deptno
+LEFT JOIN t_salgrade s ON e.sal BETWEEN s.losal AND s.hisal
+LEFT JOIN (
+SELECT em.empno,em.ename,dm.dname
+FROM t_emp em LEFT JOIN t_dept dm ON em.deptno=dm.deptno
+) t ON e.mgr=t.empno;
