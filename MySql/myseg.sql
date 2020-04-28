@@ -209,3 +209,80 @@ LEFT JOIN (
 SELECT em.empno,em.ename,dm.dname
 FROM t_emp em LEFT JOIN t_dept dm ON em.deptno=dm.deptno
 ) t ON e.mgr=t.empno;
+
+
+SELECT t.empno,t.ename,d.dname
+FROM t_emp t LEFT JOIN t_dept d ON t.deptno=d.deptno;
+
+SELECT e.ename,e.deptno
+FROM t_emp e JOIN (SELECT deptno FROM t_emp WHERE ename IN ("MARTIN","FORD")) d ON e.deptno=d.deptno AND ename NOT IN("MARTIN","FORD");
+
+#把每个员工的编号和上司的编号+1，用order by子句完成
+
+UPDATE t_emp SET empno=empno+1,mgr=mgr+1
+ORDER BY empno DESC;
+
+
+#把月收入前三名的员工底薪减100元，用limit子句完成
+
+UPDATE t_emp SET sal=sal-100
+ORDER BY sal+IFNULL(comm,0) DESC
+LIMIT 3;
+
+#把10部门中，工龄超过20年的员工，底薪增加200元
+
+UPDATE t_emp SET sal=sal+200
+WHERE (DATEDIFF(NOW(),hiredate)/365) > 20 AND deptno=10;
+
+#把allen调往research部门，职务调整为analyst
+
+UPDATE t_emp e JOIN t_dept d 
+SET	e.deptno = d.deptno,e.job="ANALYST"
+WHERE e.ename="ALLEN" AND d.dname="RESEARCH";
+
+#把底薪低于公司平均底薪的员工，底薪增加150元
+
+UPDATE t_emp e JOIN (SELECT AVG(sal) AS avg FROM t_emp) t 
+SET e.sal=e.sal+150
+WHERE e.sal < t.avg;
+
+#把没有部门的员工，或者SALES部门低于2000元底薪的员工，都调往20部门
+
+UPDATE t_emp e LEFT JOIN t_dept d ON e.deptno=d.deptno
+SET e.deptno=20
+WHERE e.deptno IS NULL OR (d.dname="SALES" AND e.sal < 2000);
+
+#删除10部门中，工龄超过20年的员工记录
+
+DELETE FROM t_emp 
+WHERE deptno=10 AND DATEDIFF(NOW(),hiredate)/365 > 20 
+
+
+#删除20部门中工资最高的员工记录
+
+DELETE FROM t_emp
+WHERE deptno=20
+ORDER BY (sal+IFNULL(comm,0)) DESC
+LIMIT 1;
+
+#删除SALES部门和该部门的全部员工记录
+
+DELETE e,d
+FROM t_emp e JOIN t_dept d ON e.deptno=d.deptno
+WHERE d.dname="SALES"
+
+
+#删除每个低于部门平均底薪的员工记录
+
+DELETE e
+FROM t_emp e JOIN
+(SELECT deptno,AVG(sal) AS avg FROM t_emp GROUP BY deptno) t
+ON e.deptno=t.deptno AND e.sal < t.avg;
+
+#删除员工KING和他的直接下属的员工记录
+
+DELETE e
+FROM t_emp e JOIN
+(SELECT empno FROM t_emp WHERE ename="KING") t
+ON e.mgr=t.empno OR e.ename="KING";
+
