@@ -1,0 +1,52 @@
+CREATE DATABASE vega;
+USE vega;
+CREATE TABLE t_type(
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	type VARCHAR(20) NOT NULL UNIQUE
+);
+
+INSERT INTO t_type(type) VALUE("要闻"),("体育"),("科技"),("娱乐"),("历史");
+
+CREATE TABLE t_role(
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	role VARCHAR(20) NOT NULL UNIQUE
+);
+
+INSERT INTO t_role(role) VALUES("管理员"),("新闻编辑");
+
+SELECT HEX(AES_ENCRYPT("你好","123456"));
+SELECT AES_DECRYPT(
+UNHEX("62C8DCB75B426AF6A5C0EB2DE5847795"),
+"123456");
+
+CREATE TABLE t_user(
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	username VARCHAR(20) NOT NULL UNIQUE,
+	password VARCHAR(500) NOT NULL,
+	email VARCHAR(100) NOT NULL UNIQUE,
+	role_id INT UNSIGNED NOT NULL,
+	INDEX(username)
+);
+
+INSERT INTO t_user(username,password,email,role_id)
+VALUES
+("admin",HEX(AES_ENCRYPT("123456","123456")),"admin@163.com",1),
+("scott",HEX(AES_ENCRYPT("123456","123456")),"scott@163.com",2);
+
+
+CREATE TABLE t_news(
+	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	title VARCHAR(40) NOT NULL,
+	editor_id INT UNSIGNED NOT NULL,
+	type_id INT UNSIGNED NOT NULL,
+	content_id CHAR(12) NOT NULL,
+	is_top TINYINT NOT NULL UNIQUE,
+	create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	update_time TIMESTAMP NOT NULL,
+	state ENUM("草稿","待审批","已审批","隐藏") NOT NULL,
+	INDEX(editor_id),
+	INDEX(type_id),
+	INDEX(state),
+	INDEX(create_time),
+	INDEX(is_top)
+);
