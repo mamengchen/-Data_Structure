@@ -70,3 +70,6 @@ db.teacher.update({name:"Jack"},{$pull:{role:"副校长"}})
 
 // 删除全部内容
 db.teacher.remove({})
+
+mongodump --host=localhost --port=27017 -u admin -p 123456 --authenticationDatabase=admin -d school -o E:/
+mongorestore --host=localhost --port=27017 -u admin -p 123456 --authenticationDatabase=admin --drop -d school E:/school
