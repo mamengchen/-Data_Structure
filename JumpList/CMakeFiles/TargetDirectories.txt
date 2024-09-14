@@ -1,0 +1,3 @@
+/home/mmc/Documents/mmcObject/-Data_Structure/JumpList/CMakeFiles/jumpList.dir
+/home/mmc/Documents/mmcObject/-Data_Structure/JumpList/CMakeFiles/edit_cache.dir
+/home/mmc/Documents/mmcObject/-Data_Structure/JumpList/CMakeFiles/rebuild_cache.dir
