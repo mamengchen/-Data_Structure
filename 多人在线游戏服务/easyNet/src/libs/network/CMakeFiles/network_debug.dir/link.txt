@@ -1,0 +1,2 @@
+/usr/bin/ar qc /home/mmc/Documents/mmcObject/-Data_Structure/多人在线游戏服务/easyNet/libs/libnetwork_debug.a CMakeFiles/network_debug.dir/network.cpp.o
+/usr/bin/ranlib /home/mmc/Documents/mmcObject/-Data_Structure/多人在线游戏服务/easyNet/libs/libnetwork_debug.a
